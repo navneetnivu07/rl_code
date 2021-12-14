@@ -1,6 +1,21 @@
 # objective is to get the cart to the flag.
 # for now, let's just move randomly:
 
+'''
+Observation:
+    Type: Box(2)
+    Num    Observation               Min            Max
+    0      Car Position              -1.2           0.6
+    1      Car Velocity              -0.07          0.07
+
+Actions:
+    Type: Discrete(3)
+    Num    Action
+    0      Accelerate to the Left
+    1      Don't accelerate
+    2      Accelerate to the Right
+'''
+
 import gym
 import numpy as np
 
@@ -25,6 +40,7 @@ epsilon_decay_value = epsilon/(END_EPSILON_DECAYING - START_EPSILON_DECAYING)
 q_table = np.random.uniform(low=-2, high=0, size=(DISCRETE_OS_SIZE + [env.action_space.n]))
 
 print(q_table[0].shape)
+print(q_table.shape)
 
 def get_discrete_state(state):
     discrete_state = (state - env.observation_space.low)/discrete_os_win_size
@@ -50,7 +66,6 @@ for episode in range(EPISODES):
             # Get random action
             action = np.random.randint(0, env.action_space.n)
 
-
         new_state, reward, done, _ = env.step(action)
 
         new_discrete_state = get_discrete_state(new_state)
@@ -73,7 +88,6 @@ for episode in range(EPISODES):
 
             # Update Q table with new Q value
             q_table[discrete_state + (action,)] = new_q
-
 
         # Simulation ended (for any reson) - if goal position is achived - update Q value with reward directly
         elif new_state[0] >= env.goal_position:
